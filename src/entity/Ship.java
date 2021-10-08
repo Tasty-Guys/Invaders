@@ -18,9 +18,9 @@ public class Ship extends Entity {
 	/** Time between shots. */
 	private static final int SHOOTING_INTERVAL = 750;
 	/** Speed of the bullets shot by the ship. */
-	private static final int BULLET_SPEED = -6;
+	private int BULLET_SPEED = -6;
 	/** Movement of the ship for each unit of time. */
-	private static final int SPEED = 2;
+	private int SPEED = 2;
 	
 	/** Minimum time between shots. */
 	private Cooldown shootingCooldown;
@@ -48,7 +48,7 @@ public class Ship extends Entity {
 	 * reached.
 	 */
 	public final void moveRight() {
-		this.positionX += SPEED;
+		this.positionX += convertspeed();
 	}
 
 	/**
@@ -56,7 +56,7 @@ public class Ship extends Entity {
 	 * reached.
 	 */
 	public final void moveLeft() {
-		this.positionX -= SPEED;
+		this.positionX -= convertspeed();
 	}
 
 	/**
@@ -70,7 +70,7 @@ public class Ship extends Entity {
 		if (this.shootingCooldown.checkFinished()) {
 			this.shootingCooldown.reset();
 			bullets.add(BulletPool.getBullet(positionX + this.width / 2,
-					positionY, BULLET_SPEED));
+					positionY, convertbulletspeed()));
 			return true;
 		}
 		return false;
@@ -108,6 +108,20 @@ public class Ship extends Entity {
 	 * @return Speed of the ship.
 	 */
 	public final int getSpeed() {
-		return SPEED;
+		return convertspeed();
+	}
+
+	private int convertspeed() {
+		int set = Core.getspeedCode();
+		if (set == 2) return (int) (SPEED * 1.5);
+		else if (set == 3) return SPEED * 2;
+		else return SPEED;
+	}
+
+	private int convertbulletspeed() {
+		int set = Core.getspeedCode();
+		if (set == 2) return (int) (BULLET_SPEED * 1.5);
+		else if (set == 3) return BULLET_SPEED * 2;
+		else return BULLET_SPEED;
 	}
 }

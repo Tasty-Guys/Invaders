@@ -204,7 +204,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 				/ (this.nShipsHigh * this.nShipsWide);
 		this.movementSpeed = (int) (Math.pow(remainingProportion, 2)
 				* this.baseSpeed);
-		this.movementSpeed += MINIMUM_SPEED;
+		this.movementSpeed += convertminimumspeed();
 		
 		movementInterval++;
 		if (movementInterval >= this.movementSpeed) {
@@ -338,7 +338,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		if (this.shootingCooldown.checkFinished()) {
 			this.shootingCooldown.reset();
 			bullets.add(BulletPool.getBullet(shooter.getPositionX()
-					+ shooter.width / 2, shooter.getPositionY(), BULLET_SPEED));
+					+ shooter.width / 2, shooter.getPositionY(), convertbulletspeed()));
 		}
 	}
 
@@ -425,5 +425,19 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	 */
 	public final boolean isEmpty() {
 		return this.shipCount <= 0;
+	}
+
+	private int convertminimumspeed() {
+		int set = Core.getspeedCode();
+		if (set == 2) return MINIMUM_SPEED - 3;
+		else if (set == 3) return MINIMUM_SPEED - 5;
+		else return MINIMUM_SPEED;
+	}
+
+	private int convertbulletspeed() {
+		int set = Core.getspeedCode();
+		if (set == 2) return (int) (BULLET_SPEED * 1.2);
+		else if (set == 3) return (int) (BULLET_SPEED * 1.5);
+		else return BULLET_SPEED;
 	}
 }
