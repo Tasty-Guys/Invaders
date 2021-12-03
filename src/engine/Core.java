@@ -61,8 +61,8 @@ public final class Core {
 	private static final GameSettings SETTINGS_LEVEL_6 =
 		new GameSettings(7, 7, 10, 1000, "./music/music.wav");
 	/** Difficulty settings for level 7. */
-	private static final GameSettings SETTINGS_LEVEL_7 =
-		new GameSettings(8, 7, 2, 500, "./music/music.wav");
+	private static final GameSettings FINAL_LEVEL =
+		new GameSettings(1, 1, 1, 200, "./music/music.wav");
 
 	/** Frame to draw the screen on. */
 	private static Frame frame;
@@ -86,6 +86,14 @@ public final class Core {
 	 * @param args
 	 *            Program args, ignored.
 	 */
+
+	public static boolean isFinalLevel(GameSettings gameSettings) {
+		if (gameSettings == FINAL_LEVEL) {
+			return true;
+		}
+		return false;
+	}
+
 	public static void main(final String[] args) {
 		try {
 			LOGGER.setUseParentHandlers(false);
@@ -117,7 +125,7 @@ public final class Core {
 		gameSettings.add(SETTINGS_LEVEL_4);
 		gameSettings.add(SETTINGS_LEVEL_5);
 		gameSettings.add(SETTINGS_LEVEL_6);
-		gameSettings.add(SETTINGS_LEVEL_7);
+		gameSettings.add(FINAL_LEVEL);
 
 		GameState gameState;
 

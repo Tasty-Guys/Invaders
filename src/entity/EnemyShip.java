@@ -23,6 +23,8 @@ public class EnemyShip extends Entity {
 	/** Point value of a bonus enemy. */
 	private static final int BONUS_TYPE_POINTS = 100;
 
+	private static final int BOSS_TYPE_POINTS = 1000;
+
 	/** Cooldown between sprite changes. */
 	private Cooldown animationCooldown;
 	/** Checks if the ship has been hit by a bullet. */
@@ -31,6 +33,7 @@ public class EnemyShip extends Entity {
 	private int pointValue;
 	int hp;
 
+	private int hp;
 	/**
 	 * Constructor, establishes the ship's properties.
 	 *
@@ -67,6 +70,12 @@ public class EnemyShip extends Entity {
 				super.setColor(Color.PINK);
 				this.hp = 3;
 				break;
+      case Boss:
+        this.width *= 4;
+        this.height *= 4;
+        this.pointValue = BOSS_TYPE_POINTS;
+        this.hp = 10;
+        break;
 			default:
 				this.pointValue = 0;
 				break;
@@ -155,11 +164,17 @@ public class EnemyShip extends Entity {
 	public final void destroy(EnemyShip enemyShip) {
 		if (enemyShip.hp == 0) {
 			this.isDestroyed = true;
-			this.spriteType = SpriteType.Explosion;
-		} else {
+			if (this.spriteType == SpriteType.Boss){
+				this.spriteType = SpriteType.BossExplosion;
+			}
+			else{
+				this.spriteType = SpriteType.Explosion;
+			}
+
+		}
+		else {
 			this.isDestroyed = false;
 		}
-
 	}
 
 	/**
