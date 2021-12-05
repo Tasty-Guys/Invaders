@@ -69,6 +69,18 @@ public class OptionScreen extends Screen {
 				|| inputManager.isKeyDown(KeyEvent.VK_A)) {
 				if (!this.chk_setting)
 					previousSolItem();
+
+				if (inputManager.isKeyDown(KeyEvent.VK_DOWN) ||
+					inputManager.isKeyDown(KeyEvent.VK_S)) {
+					downSpeedItem();
+				}
+				this.chk_setting = true;
+				this.selectionCooldown.reset();
+			}
+			if (inputManager.isKeyDown(KeyEvent.VK_LEFT) ||
+				inputManager.isKeyDown(KeyEvent.VK_A)) {
+				if (!this.chk_setting)
+					previousSolItem();
 				else
 					previousSpeedItem();
 				this.selectionCooldown.reset();
