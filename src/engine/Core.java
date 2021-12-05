@@ -15,11 +15,16 @@ import screen.Screen;
 import screen.SummaryScreen;
 import screen.TitleScreen;
 
+
+/*
+Test 해보기
+*/
+
 /**
  * Implements core game logic.
- * 
+ *
  * @author <a href="mailto:RobertoIA1987@gmail.com">Roberto Izquierdo Amo</a>
- * 
+ *
  */
 public final class Core {
 
@@ -36,29 +41,29 @@ public final class Core {
 	private static final int EXTRA_LIFE_FRECUENCY = 3;
 	/** Total number of levels. */
 	private static final int NUM_LEVELS = 7;
-	
+
 	/** Difficulty settings for level 1. */
 	private static final GameSettings SETTINGS_LEVEL_1 =
-			new GameSettings(5, 4, 60, 2000);
+		new GameSettings(5, 4, 60, 2000, "./music/superMario.wav");
 	/** Difficulty settings for level 2. */
 	private static final GameSettings SETTINGS_LEVEL_2 =
-			new GameSettings(5, 5, 50, 2500);
+		new GameSettings(5, 5, 50, 2500, "./music/attack.wav");
 	/** Difficulty settings for level 3. */
 	private static final GameSettings SETTINGS_LEVEL_3 =
-			new GameSettings(6, 5, 40, 1500);
+		new GameSettings(6, 5, 40, 1500, "./music/music.wav");
 	/** Difficulty settings for level 4. */
 	private static final GameSettings SETTINGS_LEVEL_4 =
-			new GameSettings(6, 6, 30, 1500);
+		new GameSettings(6, 6, 30, 1500, "./music/music.wav");
 	/** Difficulty settings for level 5. */
 	private static final GameSettings SETTINGS_LEVEL_5 =
-			new GameSettings(7, 6, 20, 1000);
+		new GameSettings(7, 6, 20, 1000, "./music/music.wav");
 	/** Difficulty settings for level 6. */
 	private static final GameSettings SETTINGS_LEVEL_6 =
-			new GameSettings(7, 7, 10, 1000);
+		new GameSettings(7, 7, 10, 1000, "./music/music.wav");
 	/** Difficulty settings for level 7. */
-	private static final GameSettings SETTINGS_LEVEL_7 =
-			new GameSettings(8, 7, 2, 500);
-	
+	private static final GameSettings FINAL_LEVEL =
+		new GameSettings(1, 1, 1, 200, "./music/music.wav");
+
 	/** Frame to draw the screen on. */
 	private static Frame frame;
 	/** Screen currently shown. */
@@ -67,19 +72,28 @@ public final class Core {
 	private static List<GameSettings> gameSettings;
 	/** Application logger. */
 	private static final Logger LOGGER = Logger.getLogger(Core.class
-			.getSimpleName());
+		.getSimpleName());
 	/** Logger handler for printing to disk. */
 	private static Handler fileHandler;
 	/** Logger handler for printing to console. */
 	private static ConsoleHandler consoleHandler;
-
+	private static Sound bgm;
+	private static Sound mainBgm;
 
 	/**
 	 * Test implementation.
-	 * 
+	 *
 	 * @param args
 	 *            Program args, ignored.
 	 */
+
+	public static boolean isFinalLevel(GameSettings gameSettings) {
+		if (gameSettings == FINAL_LEVEL) {
+			return true;
+		}
+		return false;
+	}
+
 	public static void main(final String[] args) {
 		try {
 			LOGGER.setUseParentHandlers(false);
@@ -111,8 +125,8 @@ public final class Core {
 		gameSettings.add(SETTINGS_LEVEL_4);
 		gameSettings.add(SETTINGS_LEVEL_5);
 		gameSettings.add(SETTINGS_LEVEL_6);
-		gameSettings.add(SETTINGS_LEVEL_7);
-		
+		gameSettings.add(FINAL_LEVEL);
+
 		GameState gameState;
 
 		int returnCode = 1;
@@ -120,70 +134,74 @@ public final class Core {
 			gameState = new GameState(1, 0, MAX_LIVES, 0, 0);
 
 			switch (returnCode) {
-			case 1:
-				// Main menu.
-				currentScreen = new TitleScreen(width, height, FPS);
-				LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
+				case 1:
+					// Main menu.
+					mainBgm = new Sound("./music/TheStarFestival.wav");
+					mainBgm.playSoundLoop(1);
+					currentScreen = new TitleScreen(width, height, FPS);
+					LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
 						+ " title screen at " + FPS + " fps.");
-				returnCode = frame.setScreen(currentScreen);
-				LOGGER.info("Closing title screen.");
-				break;
-			case 2:
-				// Game & score.
-				do {
-					// One extra live every few levels.
-					boolean bonusLife = gameState.getLevel()
+					returnCode = frame.setScreen(currentScreen);
+					LOGGER.info("Closing title screen.");
+					mainBgm.pause();
+					break;
+				case 2:
+					// Game & score.
+					do {
+						// One extra live every few levels.
+						bgm = new Sound(gameSettings.get(gameState.getLevel() - 1).getWavPath());
+						bgm.playSoundLoop(1);
+						boolean bonusLife = gameState.getLevel()
 							% EXTRA_LIFE_FRECUENCY == 0
 							&& gameState.getLivesRemaining() < MAX_LIVES;
-					
-					currentScreen = new GameScreen(gameState,
+
+						currentScreen = new GameScreen(gameState,
 							gameSettings.get(gameState.getLevel() - 1),
 							bonusLife, width, height, FPS);
-					LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
+						LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
 							+ " game screen at " + FPS + " fps.");
-					frame.setScreen(currentScreen);
-					LOGGER.info("Closing game screen.");
+						frame.setScreen(currentScreen);
+						LOGGER.info("Closing game screen.");
 
-					gameState = ((GameScreen) currentScreen).getGameState();
+						gameState = ((GameScreen)currentScreen).getGameState();
 
-					gameState = new GameState(gameState.getLevel() + 1,
+						gameState = new GameState(gameState.getLevel() + 1,
 							gameState.getScore(),
 							gameState.getLivesRemaining(),
 							gameState.getBulletsShot(),
 							gameState.getShipsDestroyed());
-
-				} while (gameState.getLivesRemaining() > 0
+						bgm.pause();
+					} while (gameState.getLivesRemaining() > 0
 						&& gameState.getLevel() <= NUM_LEVELS);
 
-				LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
+					LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
 						+ " score screen at " + FPS + " fps, with a score of "
 						+ gameState.getScore() + ", "
 						+ gameState.getLivesRemaining() + " lives remaining, "
 						+ gameState.getBulletsShot() + " bullets shot and "
 						+ gameState.getShipsDestroyed() + " ships destroyed.");
-				currentScreen = new ScoreScreen(width, height, FPS, gameState);
-				returnCode = frame.setScreen(currentScreen);
-				LOGGER.info("Closing score screen.");
-				break;
-			case 3:
-				// High scores.
-				currentScreen = new HighScoreScreen(width, height, FPS);
-				LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
+					currentScreen = new ScoreScreen(width, height, FPS, gameState);
+					returnCode = frame.setScreen(currentScreen);
+					LOGGER.info("Closing score screen.");
+					break;
+				case 3:
+					// High scores.
+					currentScreen = new HighScoreScreen(width, height, FPS);
+					LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
 						+ " high score screen at " + FPS + " fps.");
-				returnCode = frame.setScreen(currentScreen);
-				LOGGER.info("Closing high score screen.");
-				break;
-
-			case 5:
-				// Manual.
-				currentScreen = new SummaryScreen(width, height, FPS);
-				LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
+					returnCode = frame.setScreen(currentScreen);
+					LOGGER.info("Closing high score screen.");
+					break;
+				case 5:
+					// Manual.
+					currentScreen = new SummaryScreen(width, height, FPS);
+					LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
 						+ " summary screen at " + FPS + " fps.");
-				returnCode = frame.setScreen(currentScreen);
-				LOGGER.info("Closing manual screen.");
-				break;
-			default:
-				break;
+					returnCode = frame.setScreen(currentScreen);
+					LOGGER.info("Closing manual screen.");
+					break;
+				default:
+					break;
 			}
 
 		} while (returnCode != 0);
@@ -202,7 +220,7 @@ public final class Core {
 
 	/**
 	 * Controls access to the logger.
-	 * 
+	 *
 	 * @return Application logger.
 	 */
 	public static Logger getLogger() {
@@ -211,7 +229,7 @@ public final class Core {
 
 	/**
 	 * Controls access to the drawing manager.
-	 * 
+	 *
 	 * @return Application draw manager.
 	 */
 	public static DrawManager getDrawManager() {
@@ -220,7 +238,7 @@ public final class Core {
 
 	/**
 	 * Controls access to the input manager.
-	 * 
+	 *
 	 * @return Application input manager.
 	 */
 	public static InputManager getInputManager() {
@@ -229,7 +247,7 @@ public final class Core {
 
 	/**
 	 * Controls access to the file manager.
-	 * 
+	 *
 	 * @return Application file manager.
 	 */
 	public static FileManager getFileManager() {
@@ -238,7 +256,7 @@ public final class Core {
 
 	/**
 	 * Controls creation of new cooldowns.
-	 * 
+	 *
 	 * @param milliseconds
 	 *            Duration of the cooldown.
 	 * @return A new cooldown.
@@ -249,7 +267,7 @@ public final class Core {
 
 	/**
 	 * Controls creation of new cooldowns with variance.
-	 * 
+	 *
 	 * @param milliseconds
 	 *            Duration of the cooldown.
 	 * @param variance
@@ -257,7 +275,7 @@ public final class Core {
 	 * @return A new cooldown with variance.
 	 */
 	public static Cooldown getVariableCooldown(final int milliseconds,
-			final int variance) {
+		final int variance) {
 		return new Cooldown(milliseconds, variance);
 	}
 }
