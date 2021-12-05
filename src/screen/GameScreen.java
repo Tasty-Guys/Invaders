@@ -179,10 +179,9 @@ public class GameScreen extends Screen {
 				}
 
 				if (inputManager.isKeyDown(KeyEvent.VK_ESCAPE)) {
-
+					try {
 					pausekey = true;
 					while (pausekey) {
-						try {
 							TimeUnit.MILLISECONDS.sleep(100);
 							pausecheck = true;
 							draw();
@@ -190,9 +189,9 @@ public class GameScreen extends Screen {
 								pausecheck = false;
 								break;
 							}
-						} catch (InterruptedException e) {
-							e.printStackTrace();
 						}
+					} catch(InterruptedException e) {
+						e.printStackTrace();
 					}
 				}
 
