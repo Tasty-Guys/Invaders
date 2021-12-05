@@ -110,6 +110,9 @@ public class GameScreen extends Screen {
 		this.shipsDestroyed = gameState.getShipsDestroyed();
 	}
 
+	public boolean keyPressed(int code) {
+		return code == KeyEvent.VK_ESCAPE;
+	}
 	/**
 	 * Initializes basic screen properties, and adds necessary elements.
 	 */
@@ -175,6 +178,7 @@ public class GameScreen extends Screen {
 				}
 
 				if (inputManager.isKeyDown(KeyEvent.VK_ESCAPE)) {
+
 					pausekey = true;
 					while (pausekey) {
 						try {
@@ -238,7 +242,7 @@ public class GameScreen extends Screen {
 	/**
 	 * Draws the elements associated with the screen.
 	 */
-	private void draw() {
+	public void draw() {
 		drawManager.initDrawing(this);
 
 		drawManager.drawEntity(this.ship, this.ship.getPositionX(),

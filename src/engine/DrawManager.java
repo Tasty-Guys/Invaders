@@ -7,11 +7,13 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import jdk.nashorn.internal.ir.annotations.Ignore;
 import screen.Screen;
 import entity.Entity;
 import entity.Ship;
@@ -85,7 +87,7 @@ public final class DrawManager {
 	/**
 	 * Private constructor.
 	 */
-	private DrawManager() {
+	public DrawManager() {
 		fileManager = Core.getFileManager();
 		logger = Core.getLogger();
 		logger.info("Started loading resources.");
@@ -336,22 +338,27 @@ public final class DrawManager {
 	 * Mark texts if the screen paused.
 	 */
 
-	public void drawPause(final Screen screen, final boolean check) {
+	public String drawPause(final Screen screen, final boolean check) {
+		String message = "";
 		Color clear = new Color(255, 255, 255, 0);
 		backBufferGraphics.setFont(fontBigger);
 		if (check) {
 			backBufferGraphics.setColor(Color.green);
 			String pauseString2 = "Paused";
+			message += pauseString2;
 			backBufferGraphics.drawString(pauseString2, screen.getWidth() / 3, screen.getHeight() / 2);
 			backBufferGraphics.setFont(fontRegular);
 			backBufferGraphics.setColor(Color.gray);
 			String pauseString3 = "Press space to continue";
+			message += " ";
+			message += pauseString3;
 			backBufferGraphics.drawString(pauseString3, screen.getWidth() / 4, screen.getHeight() * 3 / 5);
 		} else {
 			backBufferGraphics.setColor(clear);
 			String pauseString = "Paused";
 			backBufferGraphics.drawString(pauseString, screen.getWidth() * 4 / 10, screen.getHeight() / 2);
 		}
+		return message;
 	}
 
 	/**
