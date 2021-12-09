@@ -64,6 +64,7 @@ public final class Core {
 	private static final GameSettings FINAL_LEVEL =
 		new GameSettings(1, 1, 1, 200, "./music/music.wav");
 
+
 	/** Frame to draw the screen on. */
 	private static Frame frame;
 	/** Screen currently shown. */
@@ -77,8 +78,10 @@ public final class Core {
 	private static Handler fileHandler;
 	/** Logger handler for printing to console. */
 	private static ConsoleHandler consoleHandler;
+
 	private static Sound bgm;
 	private static Sound mainBgm;
+
 
 	/**
 	 * Test implementation.
@@ -136,21 +139,27 @@ public final class Core {
 			switch (returnCode) {
 				case 1:
 					// Main menu.
+
 					mainBgm = new Sound("./music/TheStarFestival.wav");
 					mainBgm.playSoundLoop(1);
+
 					currentScreen = new TitleScreen(width, height, FPS);
 					LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
 						+ " title screen at " + FPS + " fps.");
 					returnCode = frame.setScreen(currentScreen);
 					LOGGER.info("Closing title screen.");
+
 					mainBgm.pause();
+
 					break;
 				case 2:
 					// Game & score.
 					do {
 						// One extra live every few levels.
+
 						bgm = new Sound(gameSettings.get(gameState.getLevel() - 1).getWavPath());
 						bgm.playSoundLoop(1);
+
 						boolean bonusLife = gameState.getLevel()
 							% EXTRA_LIFE_FRECUENCY == 0
 							&& gameState.getLivesRemaining() < MAX_LIVES;
@@ -170,7 +179,9 @@ public final class Core {
 							gameState.getLivesRemaining(),
 							gameState.getBulletsShot(),
 							gameState.getShipsDestroyed());
+
 						bgm.pause();
+
 					} while (gameState.getLivesRemaining() > 0
 						&& gameState.getLevel() <= NUM_LEVELS);
 
@@ -192,6 +203,7 @@ public final class Core {
 					returnCode = frame.setScreen(currentScreen);
 					LOGGER.info("Closing high score screen.");
 					break;
+
 				case 5:
 					// Manual.
 					currentScreen = new SummaryScreen(width, height, FPS);

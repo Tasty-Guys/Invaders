@@ -3,6 +3,7 @@ package screen;
 import java.awt.event.KeyEvent;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import engine.*;
 import engine.Cooldown;
@@ -74,7 +75,14 @@ public class GameScreen extends Screen {
 	/** Checks if a bonus life is received. */
 	private boolean bonusLife;
 
+
+	/** Check if the screen is paused */
+	private boolean pausecheck = false;
+
+	/** Check if it's ready to start game*/
+	private boolean pausekey;
 	private Sound shootSound = new Sound("./music/laser.wav");
+
 
 	/**
 	 * Constructor, establishes the properties of the screen.
@@ -108,6 +116,9 @@ public class GameScreen extends Screen {
 		this.shipsDestroyed = gameState.getShipsDestroyed();
 	}
 
+	public boolean keyPressed(int code) {
+		return code == KeyEvent.VK_ESCAPE;
+	}
 	/**
 	 * Initializes basic screen properties, and adds necessary elements.
 	 */
@@ -171,6 +182,25 @@ public class GameScreen extends Screen {
 				if (moveLeft && !isLeftBorder) {
 					this.ship.moveLeft();
 				}
+
+				if (inputManager.isKeyDown(KeyEvent.VK_ESCAPE)) {
+
+					pausekey = true;
+					while (pausekey) {
+						try {
+							TimeUnit.MILLISECONDS.sleep(100);
+							pausecheck = true;
+							draw();
+							if (inputManager.isKeyDown(KeyEvent.VK_SPACE)) {
+								pausecheck = false;
+								break;
+							}
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+
 				if (inputManager.isKeyDown(KeyEvent.VK_SPACE))
 					if (this.ship.shoot(this.bullets)) {
 						shootSound.playSoundLoop(0);
@@ -220,7 +250,7 @@ public class GameScreen extends Screen {
 	/**
 	 * Draws the elements associated with the screen.
 	 */
-	private void draw() {
+	public void draw() {
 		drawManager.initDrawing(this);
 
 		drawManager.drawEntity(this.ship, this.ship.getPositionX(),
@@ -240,6 +270,7 @@ public class GameScreen extends Screen {
 		drawManager.drawScore(this, this.score);
 		drawManager.drawLives(this, this.lives);
 		drawManager.drawHorizontalLine(this, SEPARATION_LINE_HEIGHT - 1);
+		drawManager.drawPause(this, this.pausecheck);
 
 		// Countdown to game start.
 		if (!this.inputDelay.checkFinished()) {

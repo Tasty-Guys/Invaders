@@ -80,5 +80,6 @@ public class Cooldown {
 
 	public long getTime() {
 		return this.time;
+    
 	}
 }

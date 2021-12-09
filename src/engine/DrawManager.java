@@ -7,10 +7,12 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+
 
 import entity.Bullet;
 import screen.Screen;
@@ -65,6 +67,8 @@ public final class DrawManager {
 	 * Big sized font.
 	 */
 	private static Font fontBig;
+
+	/** Bigger sized font properties. */
 	private static Font fontBigger;
 	/** Big sized font properties. */
 	private static FontMetrics fontBigMetrics;
@@ -131,9 +135,11 @@ public final class DrawManager {
 		 */
 		EnemyShipSpecial,
 		/** Destroyed enemy ship. */
+
 		Explosion,
 		Boss,
 		BossExplosion
+
 	}
 
 	;
@@ -141,7 +147,7 @@ public final class DrawManager {
 	/**
 	 * Private constructor.
 	 */
-	private DrawManager() {
+	public DrawManager() {
 		fileManager = Core.getFileManager();
 		logger = Core.getLogger();
 		logger.info("Started loading resources.");
@@ -395,11 +401,38 @@ public final class DrawManager {
 			backBufferGraphics.setColor(Color.WHITE);
 		drawCenteredRegularString(screen, exitString, screen.getHeight() / 3
 			* 2 + fontRegularMetrics.getHeight() * 4);
-		if (option == 5)
+    if (option == 5)
 			backBufferGraphics.setColor(Color.GREEN);
 		else
 			backBufferGraphics.setColor(Color.WHITE);
 		drawManualString(screen, enterManual);
+	}
+
+	/**
+	 * Mark texts if the screen paused.
+	 */
+	public String drawPause(final Screen screen, final boolean check) {
+		String message = "";
+		Color clear = new Color(255, 255, 255, 0);
+		backBufferGraphics.setFont(fontBigger);
+		if (check) {
+			backBufferGraphics.setColor(Color.green);
+			String pauseString2 = "Paused";
+			message += pauseString2;
+			backBufferGraphics.drawString(pauseString2, screen.getWidth() / 3, screen.getHeight() / 2);
+			backBufferGraphics.setFont(fontRegular);
+			backBufferGraphics.setColor(Color.gray);
+			String pauseString3 = "Press space to continue";
+			message += " ";
+			message += pauseString3;
+			backBufferGraphics.drawString(pauseString3, screen.getWidth() / 4, screen.getHeight() * 3 / 5);
+		} else {
+			backBufferGraphics.setColor(clear);
+			String pauseString = "Paused";
+			backBufferGraphics.drawString(pauseString, screen.getWidth() * 4 / 10, screen.getHeight() / 2);
+		}
+		return message;
+
 	}
 
 	/**
