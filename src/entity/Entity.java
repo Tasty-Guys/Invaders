@@ -1,6 +1,6 @@
 package entity;
 
-import java.awt.Color;
+import java.awt.*;
 
 import engine.DrawManager.SpriteType;
 
@@ -100,6 +100,10 @@ public class Entity {
 	 *
 	 * @return Sprite corresponding to the entity.
 	 */
+	public final void setColor(Color color) {
+		this.color = color;
+	}
+
 	public final SpriteType getSpriteType() {
 		return this.spriteType;
 	}

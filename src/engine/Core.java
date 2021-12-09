@@ -8,7 +8,14 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+
 import screen.*;
+
+
+
+/*
+Test 해보기
+*/
 
 /**
  * Implements core game logic.
@@ -46,25 +53,26 @@ public final class Core {
 
 	/** Difficulty settings for level 1. */
 	private static final GameSettings SETTINGS_LEVEL_1 =
-		new GameSettings(5, 4, 60, 2000);
+		new GameSettings(5, 4, 60, 2000, "./music/superMario.wav");
 	/** Difficulty settings for level 2. */
 	private static final GameSettings SETTINGS_LEVEL_2 =
-		new GameSettings(5, 5, 50, 2500);
+		new GameSettings(5, 5, 50, 2500, "./music/attack.wav");
 	/** Difficulty settings for level 3. */
 	private static final GameSettings SETTINGS_LEVEL_3 =
-		new GameSettings(6, 5, 40, 1500);
+		new GameSettings(6, 5, 40, 1500, "./music/music.wav");
 	/** Difficulty settings for level 4. */
 	private static final GameSettings SETTINGS_LEVEL_4 =
-		new GameSettings(6, 6, 30, 1500);
+		new GameSettings(6, 6, 30, 1500, "./music/music.wav");
 	/** Difficulty settings for level 5. */
 	private static final GameSettings SETTINGS_LEVEL_5 =
-		new GameSettings(7, 6, 20, 1000);
+		new GameSettings(7, 6, 20, 1000, "./music/music.wav");
 	/** Difficulty settings for level 6. */
 	private static final GameSettings SETTINGS_LEVEL_6 =
-		new GameSettings(7, 7, 10, 1000);
+		new GameSettings(7, 7, 10, 1000, "./music/music.wav");
 	/** Difficulty settings for level 7. */
-	private static final GameSettings SETTINGS_LEVEL_7 =
-		new GameSettings(8, 7, 2, 500);
+	private static final GameSettings FINAL_LEVEL =
+		new GameSettings(1, 1, 1, 200, "./music/music.wav");
+
 
 	/** Frame to draw the screen on. */
 	private static Frame frame;
@@ -80,12 +88,23 @@ public final class Core {
 	/** Logger handler for printing to console. */
 	private static ConsoleHandler consoleHandler;
 
+	private static Sound bgm;
+	private static Sound mainBgm;
+
 	/**
 	 * Test implementation.
 	 *
 	 * @param args
 	 *            Program args, ignored.
 	 */
+
+	public static boolean isFinalLevel(GameSettings gameSettings) {
+		if (gameSettings == FINAL_LEVEL) {
+			return true;
+		}
+		return false;
+	}
+
 	public static void main(final String[] args) {
 		try {
 			LOGGER.setUseParentHandlers(false);
@@ -116,7 +135,7 @@ public final class Core {
 		gameSettings.add(SETTINGS_LEVEL_4);
 		gameSettings.add(SETTINGS_LEVEL_5);
 		gameSettings.add(SETTINGS_LEVEL_6);
-		gameSettings.add(SETTINGS_LEVEL_7);
+		gameSettings.add(FINAL_LEVEL);
 
 		GameState gameState;
 
@@ -156,16 +175,27 @@ public final class Core {
 			switch (returnCode) {
 				case 1:
 					// Main menu.
+          mainBgm = new Sound("./music/TheStarFestival.wav");
+					mainBgm.playSoundLoop(1);
+          
 					currentScreen = new TitleScreen(width, height, FPS);
 					LOGGER.info("Starting " + w + "x" + h
 						+ " title screen at " + FPS + " fps.");
 					returnCode = frame.setScreen(currentScreen);
 					LOGGER.info("Closing title screen.");
+          
+          mainBgm.pause();
+
 					break;
 				case 2:
 					// Game & score.
 					do {
 						// One extra live every few levels.
+
+
+						bgm = new Sound(gameSettings.get(gameState.getLevel() - 1).getWavPath());
+						bgm.playSoundLoop(1);
+            
 						boolean bonusLife = gameState.getLevel()
 							% EXTRA_LIFE_FRECUENCY == 0
 							&& gameState.getLivesRemaining() < MAX_LIVES;
@@ -173,9 +203,11 @@ public final class Core {
 						currentScreen = new GameScreen(gameState,
 							gameSettings.get(gameState.getLevel() - 1),
 							bonusLife, width, height, FPS);
+
 						LOGGER.info("Starting " + w + "x" + h
 							+ " game screen at " + FPS + " fps.");
 						LOGGER.info("Player's speed : " + speedCode);
+
 						frame.setScreen(currentScreen);
 						LOGGER.info("Closing game screen.");
 
@@ -187,10 +219,13 @@ public final class Core {
 							gameState.getBulletsShot(),
 							gameState.getShipsDestroyed());
 
+            bgm.pause();
+            
 					} while (gameState.getLivesRemaining() > 0
 						&& gameState.getLevel() <= NUM_LEVELS);
 
 					LOGGER.info("Starting " + w + "x" + h
+
 						+ " score screen at " + FPS + " fps, with a score of "
 						+ gameState.getScore() + ", "
 						+ gameState.getLivesRemaining() + " lives remaining, "
@@ -203,12 +238,14 @@ public final class Core {
 				case 3:
 					// High scores.
 					currentScreen = new HighScoreScreen(width, height, FPS);
+
 					LOGGER.info("Starting " + w + "x" + h
+
 						+ " high score screen at " + FPS + " fps.");
 					returnCode = frame.setScreen(currentScreen);
 					LOGGER.info("Closing high score screen.");
 					break;
-
+          
 				case 4:
 					// Option.
 					currentScreen = new OptionScreen(width, height, FPS);
@@ -220,6 +257,15 @@ public final class Core {
 					LOGGER.info("Closing option screen.");
 					break;
 
+				case 5:
+					// Manual.
+					currentScreen = new SummaryScreen(width, height, FPS);
+					LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
+						+ " summary screen at " + FPS + " fps.");
+					returnCode = frame.setScreen(currentScreen);
+					LOGGER.info("Closing manual screen.");
+					break;
+          
 				default:
 					break;
 			}
