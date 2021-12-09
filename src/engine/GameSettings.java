@@ -32,6 +32,7 @@ public class GameSettings {
 	 *            Frecuency of enemy shootings, +/- 30%.
 	 */
 	public GameSettings(final int formationWidth, final int formationHeight,
+
 		final int baseSpeed, final int shootingFrecuency, String wavPath) {
 		this.formationWidth = formationWidth;
 		this.formationHeight = formationHeight;

@@ -142,7 +142,6 @@ public final class DrawManager {
 
 	}
 
-	;
 
 	/**
 	 * Private constructor.
@@ -380,6 +379,7 @@ public final class DrawManager {
 	public void drawMenu(final Screen screen, final int option) {
 		String playString = "Play";
 		String highScoresString = "High scores";
+		String optionString = "Option";
 		String exitString = "exit";
 		String enterManual = "?";
 
@@ -400,6 +400,12 @@ public final class DrawManager {
 		else
 			backBufferGraphics.setColor(Color.WHITE);
 		drawCenteredRegularString(screen, exitString, screen.getHeight() / 3
+			* 2 + fontRegularMetrics.getHeight() * 6);
+		if (option == 4)
+			backBufferGraphics.setColor(Color.GREEN);
+		else
+			backBufferGraphics.setColor(Color.WHITE);
+		drawCenteredRegularString(screen, optionString, screen.getHeight() / 3
 			* 2 + fontRegularMetrics.getHeight() * 4);
     if (option == 5)
 			backBufferGraphics.setColor(Color.GREEN);
@@ -432,7 +438,6 @@ public final class DrawManager {
 			backBufferGraphics.drawString(pauseString, screen.getWidth() * 4 / 10, screen.getHeight() / 2);
 		}
 		return message;
-
 	}
 
 	/**
@@ -673,6 +678,119 @@ public final class DrawManager {
 			drawCenteredBigString(screen, "GO!", screen.getHeight() / 2
 				+ fontBigMetrics.getHeight() / 3);
 	}
+	/**
+	 * Draws option screen title and instructions.
+	 *
+	 * @param screen
+	 *            Screen to draw on.
+	 */
+	public void drawOptionMenu(final Screen screen) {
+		String highScoreString = "Option";
+		String instructionsString = "Press Space to return";
+		String decidesettingString = "Press Enter to decide setting";
+
+		backBufferGraphics.setColor(Color.GREEN);
+		drawCenteredBigString(screen, highScoreString, screen.getHeight() / 8);
+
+		backBufferGraphics.setColor(Color.GRAY);
+		drawCenteredRegularString(screen, decidesettingString,
+			screen.getHeight() / 5);
+
+		drawCenteredRegularString(screen, instructionsString,
+			screen.getHeight() / 4);
+
+	}
+
+	public void drawSelectSetting(final Screen screen, final boolean chk_setting,
+		final int selResolution, final int selSpeed) {
+		String resolution = "Resolution";
+		String game_speed = "Game Speed";
+
+		String resolution_one = "448 * 520                                                            ";
+		String resolution_two = "                              480 * 560                              ";
+		String resolution_three = "                                                            560 * 650";
+		String game_speed_one = "NORMAL                                                            ";
+		String game_speed_two = "                              HARD                              ";
+		String game_speed_three = "                                                            INSANE";
+		int height = 3;
+
+		// colored setting title
+		backBufferGraphics.setColor(Color.magenta);
+		drawCenteredRegularString(screen, resolution, screen.getHeight()
+			/ height + fontRegularMetrics.getHeight());
+		drawCenteredRegularString(screen, game_speed,
+			screen.getHeight() / height + fontRegularMetrics.getHeight()
+				* 7);
+
+		// colored setting selections
+
+		if (!chk_setting) {
+			if (selResolution == 1)
+				backBufferGraphics.setColor(Color.GREEN);
+			else
+				backBufferGraphics.setColor(Color.WHITE);
+			drawCenteredRegularString(screen, resolution_one,
+				screen.getHeight() / height + fontRegularMetrics.getHeight() * 4);
+
+			if (selResolution == 2)
+				backBufferGraphics.setColor(Color.GREEN);
+			else
+				backBufferGraphics.setColor(Color.WHITE);
+			drawCenteredRegularString(screen, resolution_two,
+				screen.getHeight() / height + fontRegularMetrics.getHeight()
+					* 4);
+
+			if (selResolution == 3)
+				backBufferGraphics.setColor(Color.GREEN);
+			else
+				backBufferGraphics.setColor(Color.WHITE);
+			drawCenteredRegularString(screen, resolution_three,
+				screen.getHeight() / height + fontRegularMetrics.getHeight()
+					* 4);
+
+			backBufferGraphics.setColor(Color.WHITE);
+			drawCenteredRegularString(screen, game_speed_one,
+				screen.getHeight()
+					/ height + fontRegularMetrics.getHeight() * 10);
+			drawCenteredRegularString(screen, game_speed_two, screen.getHeight()
+				/ height + fontRegularMetrics.getHeight() * 10);
+			drawCenteredRegularString(screen, game_speed_three, screen.getHeight()
+				/ height + fontRegularMetrics.getHeight() * 10);
+
+		} else {
+			if (selSpeed == 1)
+				backBufferGraphics.setColor(Color.GREEN);
+			else
+				backBufferGraphics.setColor(Color.WHITE);
+			drawCenteredRegularString(screen, game_speed_one,
+				screen.getHeight()
+					/ height + fontRegularMetrics.getHeight() * 10);
+
+			if (selSpeed == 2)
+				backBufferGraphics.setColor(Color.GREEN);
+			else
+				backBufferGraphics.setColor(Color.WHITE);
+			drawCenteredRegularString(screen, game_speed_two, screen.getHeight()
+				/ height + fontRegularMetrics.getHeight() * 10);
+
+			if (selSpeed == 3)
+				backBufferGraphics.setColor(Color.GREEN);
+			else
+				backBufferGraphics.setColor(Color.WHITE);
+			drawCenteredRegularString(screen, game_speed_three, screen.getHeight()
+				/ height + fontRegularMetrics.getHeight() * 10);
+
+			backBufferGraphics.setColor(Color.WHITE);
+			drawCenteredRegularString(screen, resolution_one,
+				screen.getHeight() / height + fontRegularMetrics.getHeight()
+					* 4);
+			drawCenteredRegularString(screen, resolution_two,
+				screen.getHeight() / height + fontRegularMetrics.getHeight()
+					* 4);
+			drawCenteredRegularString(screen, resolution_three,
+				screen.getHeight() / height + fontRegularMetrics.getHeight()
+					* 4);
+		}
 
 	public void drawSummaryScreen(final Screen screen) {
 		backBufferGraphics.setFont(fontRegular);

@@ -8,12 +8,9 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import screen.GameScreen;
-import screen.HighScoreScreen;
-import screen.ScoreScreen;
-import screen.Screen;
-import screen.SummaryScreen;
-import screen.TitleScreen;
+
+import screen.*;
+
 
 
 /*
@@ -32,6 +29,18 @@ public final class Core {
 	private static final int WIDTH = 448;
 	/** Height of current screen. */
 	private static final int HEIGHT = 520;
+	/** Second width of current screen. */
+	private static final int WIDTH2 = 480;
+	/** Second height of current screen. */
+	private static final int HEIGHT2 = 560;
+
+	/** Third width of current screen. */
+	private static final int WIDTH3 = 560;
+	/** Third height of current screen. */
+	private static final int HEIGHT3 = 650;
+
+	public static int speedCode;
+
 	/** Max fps of current screen. */
 	private static final int FPS = 60;
 
@@ -82,7 +91,6 @@ public final class Core {
 	private static Sound bgm;
 	private static Sound mainBgm;
 
-
 	/**
 	 * Test implementation.
 	 *
@@ -118,8 +126,7 @@ public final class Core {
 
 		frame = new Frame(WIDTH, HEIGHT);
 		DrawManager.getInstance().setFrame(frame);
-		int width = frame.getWidth();
-		int height = frame.getHeight();
+		int width, height, w, h;
 
 		gameSettings = new ArrayList<GameSettings>();
 		gameSettings.add(SETTINGS_LEVEL_1);
@@ -133,23 +140,51 @@ public final class Core {
 		GameState gameState;
 
 		int returnCode = 1;
+		int screenCode = 1;
+
 		do {
 			gameState = new GameState(1, 0, MAX_LIVES, 0, 0);
+
+			if (screenCode == 2) {
+				frame.setWidth(WIDTH2);
+				frame.setHeight(HEIGHT2);
+				frame.setframesize(WIDTH2, HEIGHT2);
+				width = frame.getWidth();
+				height = frame.getHeight();
+				w = WIDTH2;
+				h = HEIGHT2;
+
+			} else if (screenCode == 3) {
+				frame.setWidth(WIDTH3);
+				frame.setHeight(HEIGHT3);
+				frame.setframesize(WIDTH3, HEIGHT3);
+				width = frame.getWidth();
+				height = frame.getHeight();
+				w = WIDTH3;
+				h = HEIGHT3;
+			} else {
+				frame.setWidth(WIDTH);
+				frame.setHeight(HEIGHT);
+				frame.setframesize(WIDTH, HEIGHT);
+				width = frame.getWidth();
+				height = frame.getHeight();
+				w = WIDTH;
+				h = HEIGHT;
+			}
 
 			switch (returnCode) {
 				case 1:
 					// Main menu.
-
-					mainBgm = new Sound("./music/TheStarFestival.wav");
+          mainBgm = new Sound("./music/TheStarFestival.wav");
 					mainBgm.playSoundLoop(1);
-
+          
 					currentScreen = new TitleScreen(width, height, FPS);
-					LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
+					LOGGER.info("Starting " + w + "x" + h
 						+ " title screen at " + FPS + " fps.");
 					returnCode = frame.setScreen(currentScreen);
 					LOGGER.info("Closing title screen.");
-
-					mainBgm.pause();
+          
+          mainBgm.pause();
 
 					break;
 				case 2:
@@ -157,9 +192,10 @@ public final class Core {
 					do {
 						// One extra live every few levels.
 
+
 						bgm = new Sound(gameSettings.get(gameState.getLevel() - 1).getWavPath());
 						bgm.playSoundLoop(1);
-
+            
 						boolean bonusLife = gameState.getLevel()
 							% EXTRA_LIFE_FRECUENCY == 0
 							&& gameState.getLivesRemaining() < MAX_LIVES;
@@ -167,8 +203,11 @@ public final class Core {
 						currentScreen = new GameScreen(gameState,
 							gameSettings.get(gameState.getLevel() - 1),
 							bonusLife, width, height, FPS);
-						LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
+
+						LOGGER.info("Starting " + w + "x" + h
 							+ " game screen at " + FPS + " fps.");
+						LOGGER.info("Player's speed : " + speedCode);
+
 						frame.setScreen(currentScreen);
 						LOGGER.info("Closing game screen.");
 
@@ -180,12 +219,13 @@ public final class Core {
 							gameState.getBulletsShot(),
 							gameState.getShipsDestroyed());
 
-						bgm.pause();
-
+            bgm.pause();
+            
 					} while (gameState.getLivesRemaining() > 0
 						&& gameState.getLevel() <= NUM_LEVELS);
 
-					LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
+					LOGGER.info("Starting " + w + "x" + h
+
 						+ " score screen at " + FPS + " fps, with a score of "
 						+ gameState.getScore() + ", "
 						+ gameState.getLivesRemaining() + " lives remaining, "
@@ -198,10 +238,23 @@ public final class Core {
 				case 3:
 					// High scores.
 					currentScreen = new HighScoreScreen(width, height, FPS);
-					LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
+
+					LOGGER.info("Starting " + w + "x" + h
+
 						+ " high score screen at " + FPS + " fps.");
 					returnCode = frame.setScreen(currentScreen);
 					LOGGER.info("Closing high score screen.");
+					break;
+          
+				case 4:
+					// Option.
+					currentScreen = new OptionScreen(width, height, FPS);
+					LOGGER.info("Starting " + w + "x" + h
+						+ " option screen at " + FPS + " fps.");
+					returnCode = frame.setScreen(currentScreen);
+					screenCode = currentScreen.reframe;
+					speedCode = currentScreen.respeed;
+					LOGGER.info("Closing option screen.");
 					break;
 
 				case 5:
@@ -212,6 +265,7 @@ public final class Core {
 					returnCode = frame.setScreen(currentScreen);
 					LOGGER.info("Closing manual screen.");
 					break;
+          
 				default:
 					break;
 			}
@@ -290,4 +344,10 @@ public final class Core {
 		final int variance) {
 		return new Cooldown(milliseconds, variance);
 	}
+
+	public static int getspeedCode() {
+		return speedCode;
+	}
+
+	public static void setspeedCode(int set) { speedCode = set; }
 }

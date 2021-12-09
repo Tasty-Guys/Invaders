@@ -31,6 +31,10 @@ public class Screen {
 	protected int width;
 	/** Screen height. */
 	protected int height;
+	/** Select frame's width and height */
+	public int reframe;
+	/** Select game speed */
+	public int respeed;
 	/** Frames per second shown on the screen. */
 	protected int fps; //화면에 표시되는 초당 프레임의 수.
 	/** Screen insets. */
@@ -42,6 +46,13 @@ public class Screen {
 	protected boolean isRunning;
 	/** What kind of screen goes next. */
 	protected int returnCode; //다음페이지로 넘어가기위한 번호.
+
+	/** idetify resolution or speed */
+	protected boolean chk_setting;
+	/** Choose screen size*/
+	protected int selResolution;
+	/** Choose game speed*/
+	protected int selSpeed;
 
 	/**
 	 * Constructor, establishes the properties of the screen.
@@ -64,6 +75,8 @@ public class Screen {
 		this.inputDelay = Core.getCooldown(INPUT_DELAY);
 		this.inputDelay.reset();
 		this.returnCode = 0;
+
+		reframe = 1;
 	}
 
 	/**

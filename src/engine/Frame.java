@@ -60,6 +60,37 @@ public class Frame extends JFrame {
 	}
 
 	/**
+	 * Setter for frame size.
+	 *
+	 */
+	public final void setframesize(int width, int height) {
+		setSize(width, height);
+	}
+
+	/**
+	 * Setter for frame width.
+	 *
+	 * @return Frame width.
+	 */
+	public final int setWidth(int width) {
+		Insets insets = getInsets();
+		this.width = width - insets.left - insets.right;
+		return this.width;
+	}
+
+	/**
+	 * Setter for frame height.
+	 *
+	 * @return Frame height.
+	 */
+
+	public final int setHeight(int height) {
+		Insets insets = getInsets();
+		this.height = height - insets.top + insets.bottom;
+		return this.height;
+	}
+
+	/**
 	 * Getter for frame width.
 	 *
 	 * @return Frame width.
