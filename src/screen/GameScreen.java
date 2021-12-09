@@ -5,10 +5,13 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import engine.*;
 import engine.Cooldown;
 import engine.Core;
 import engine.GameSettings;
 import engine.GameState;
+import engine.Sound;
+
 import entity.Bullet;
 import entity.BulletPool;
 import entity.EnemyShip;
@@ -72,11 +75,14 @@ public class GameScreen extends Screen {
 	/** Checks if a bonus life is received. */
 	private boolean bonusLife;
 
+
 	/** Check if the screen is paused */
 	private boolean pausecheck = false;
 
 	/** Check if it's ready to start game*/
 	private boolean pausekey;
+	private Sound shootSound = new Sound("./music/laser.wav");
+
 
 	/**
 	 * Constructor, establishes the properties of the screen.
@@ -196,8 +202,10 @@ public class GameScreen extends Screen {
 				}
 
 				if (inputManager.isKeyDown(KeyEvent.VK_SPACE))
-					if (this.ship.shoot(this.bullets))
+					if (this.ship.shoot(this.bullets)) {
+						shootSound.playSoundLoop(0);
 						this.bulletsShot++;
+					}
 			}
 
 			if (this.enemyShipSpecial != null) {
@@ -302,6 +310,7 @@ public class GameScreen extends Screen {
 		Set<Bullet> recyclable = new HashSet<Bullet>();
 		for (Bullet bullet : this.bullets)
 			if (bullet.getSpeed() > 0) {
+				//bulletSound = new Sound("./music/laser.wav");
 				if (checkCollision(bullet, this.ship) && !this.levelFinished) {
 					recyclable.add(bullet);
 					if (!this.ship.isDestroyed()) {
@@ -315,9 +324,15 @@ public class GameScreen extends Screen {
 				for (EnemyShip enemyShip : this.enemyShipFormation)
 					if (!enemyShip.isDestroyed()
 						&& checkCollision(bullet, enemyShip)) {
-						this.score += enemyShip.getPointValue();
-						this.shipsDestroyed++;
-						this.enemyShipFormation.destroy(enemyShip);
+						/*
+						modified
+						 */
+						enemyShip.setHp();
+						if (enemyShip.getHp() == 0) {
+							this.score += enemyShip.getPointValue();
+							this.shipsDestroyed++;
+							this.enemyShipFormation.destroy(enemyShip);
+						}
 						recyclable.add(bullet);
 					}
 				if (this.enemyShipSpecial != null
@@ -325,7 +340,7 @@ public class GameScreen extends Screen {
 					&& checkCollision(bullet, this.enemyShipSpecial)) {
 					this.score += this.enemyShipSpecial.getPointValue();
 					this.shipsDestroyed++;
-					this.enemyShipSpecial.destroy();
+					this.enemyShipSpecial.destroy(enemyShipSpecial);
 					this.enemyShipSpecialExplosionCooldown.reset();
 					recyclable.add(bullet);
 				}
