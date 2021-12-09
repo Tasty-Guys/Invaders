@@ -11,14 +11,14 @@ import engine.InputManager;
 
 /**
  * Implements a generic screen.
- * 
+ *
  * @author <a href="mailto:RobertoIA1987@gmail.com">Roberto Izquierdo Amo</a>
- * 
+ *
  */
 public class Screen {
-	
+
 	/** Milliseconds until the screen accepts user input. */
-	private static final int INPUT_DELAY = 1000;
+	private static final int INPUT_DELAY = 1000; //사용자의 입력을 수락할때까지의 시간 (밀리초)
 
 	/** Draw Manager instance. */
 	protected DrawManager drawManager;
@@ -31,21 +31,32 @@ public class Screen {
 	protected int width;
 	/** Screen height. */
 	protected int height;
+	/** Select frame's width and height */
+	public int reframe;
+	/** Select game speed */
+	public int respeed;
 	/** Frames per second shown on the screen. */
-	protected int fps;
+	protected int fps; //화면에 표시되는 초당 프레임의 수.
 	/** Screen insets. */
 	protected Insets insets;
 	/** Time until the screen accepts user input. */
-	protected Cooldown inputDelay;
+	protected Cooldown inputDelay; // 사용자의 입력을 수락할때까지의 시간.
 
 	/** If the screen is running. */
 	protected boolean isRunning;
 	/** What kind of screen goes next. */
-	protected int returnCode;
+	protected int returnCode; //다음페이지로 넘어가기위한 번호.
+
+	/** idetify resolution or speed */
+	protected boolean chk_setting;
+	/** Choose screen size*/
+	protected int selResolution;
+	/** Choose game speed*/
+	protected int selSpeed;
 
 	/**
 	 * Constructor, establishes the properties of the screen.
-	 * 
+	 *
 	 * @param width
 	 *            Screen width.
 	 * @param height
@@ -64,6 +75,8 @@ public class Screen {
 		this.inputDelay = Core.getCooldown(INPUT_DELAY);
 		this.inputDelay.reset();
 		this.returnCode = 0;
+
+		reframe = 1;
 	}
 
 	/**
@@ -75,7 +88,7 @@ public class Screen {
 
 	/**
 	 * Activates the screen.
-	 * 
+	 *
 	 * @return Next screen code.
 	 */
 	public int run() {
@@ -107,7 +120,7 @@ public class Screen {
 
 	/**
 	 * Getter for screen width.
-	 * 
+	 *
 	 * @return Screen width.
 	 */
 	public final int getWidth() {
@@ -116,7 +129,7 @@ public class Screen {
 
 	/**
 	 * Getter for screen height.
-	 * 
+	 *
 	 * @return Screen height.
 	 */
 	public final int getHeight() {
